@@ -858,6 +858,7 @@ namespace QuantLib {
         DiscountFactor discount = 1.0;
         Date lastDate = npvDate;
         Date refStartDate, refEndDate;
+        Schedule schedule;
 
         for (Size i=0; i<leg.size(); ++i) {
             if (leg[i]->hasOccurred(settlementDate,
@@ -875,7 +876,9 @@ namespace QuantLib {
             if (coupon) {
                 refStartDate = coupon->referencePeriodStart();
                 refEndDate = coupon->referencePeriodEnd();
+                schedule = coupon->schedule();
             } else {
+                schedule = Schedule();
                 if (lastDate == npvDate) {
                     // we don't have a previous coupon date,
                     // so we fake it
@@ -886,7 +889,7 @@ namespace QuantLib {
                 refEndDate = couponDate;
             }
             DiscountFactor b = y.discountFactor(lastDate, couponDate,
-                                                refStartDate, refEndDate);
+                                                refStartDate, refEndDate, schedule);
             discount *= b;
             lastDate = couponDate;
 
