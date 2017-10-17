@@ -298,7 +298,7 @@ int main( int argc, char* argv[] )
             } mutex_remover;
 
             struct queue_remove {
-                queue_remove(const char* name) : name_(name) { }
+                explicit queue_remove(const char* name) : name_(name) { }
                 ~queue_remove() { message_queue::remove(name_); }
 
             private:
@@ -506,9 +506,12 @@ int main( int argc, char* argv[] )
 
     #if BOOST_VERSION < 106000
     return runtime_config::no_result_code()
-    #else
+    #elif BOOST_VERSION < 106400
     // changed in Boost 1.60
     return !runtime_config::get<bool>( runtime_config::RESULT_CODE )
+    #else
+    // changed again in Boost 1.64
+    return !runtime_config::get<bool>( runtime_config::btrt_result_code )
     #endif
         ? boost::exit_success
         : results_collector.results(
